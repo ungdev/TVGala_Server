@@ -28,15 +28,6 @@ io.on('connection', socket => {
     socket.emit('schedules', schedules);
 });
 
-// Modifications stores
-Array.observe(informations, changes => {
-    io.sockets.emit('informations', informations);
-});
-
-Array.observe(schedules, changes => {
-    io.sockets.emit('schedules', schedules);
-});
-
 // Initialisation BDD
 models.Information.execute().then(cursor => {
     informations = cursor;
@@ -48,15 +39,15 @@ models.Schedule.execute().then(cursor => {
 
 // Modifications BDD
 models.Information.changes().then(feed => {
-    updateStore(informations, feed);
+    updateStoreAndSend('informations', informations, feed);
 });
 
 models.Schedule.changes().then(feed => {
-    updateStore(schedules, feed);
+    updateStoreAndSend('schedules', schedules, feed);
 });
 
 // Fonctions
-function updateStore(store, feed) {
+function updateStoreAndSend(node, store, feed) {
     feed.each((err, doc) => {
         if(err) return;
 
@@ -80,5 +71,7 @@ function updateStore(store, feed) {
                 }
             });
         }
+
+        io.sockets.emit(node, store);
     });
 }
