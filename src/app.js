@@ -60,7 +60,6 @@ function updateStoreAndSend(node, store, feed) {
 
                 ++i;
             }
-
             store.splice(i, 1);
         } else if(doc.getOldValue() == null) {
             store.push(Object.assign({}, doc));
