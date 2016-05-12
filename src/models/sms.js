@@ -8,7 +8,7 @@ const Sms = thinky.createModel('Sms', {
     from       : type.string(),
     content    : type.string(),
     createdAt  : type.date().default(new Date()),
-    editedAt   : Date,
+    editedAt   : type.date().default(new Date()),
     isRemoved  : type.boolean().default(false)
 }, {
     enforce_missing: true,

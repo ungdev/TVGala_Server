@@ -10,7 +10,7 @@ const Schedule = thinky.createModel('Schedule', {
     start      : Date,
     end        : Date,
     createdAt  : type.date().default(new Date()),
-    editedAt   : Date,
+    editedAt   : type.date().default(new Date()),
     isRemoved  : type.boolean().default(false)
 }, {
     enforce_missing: true,

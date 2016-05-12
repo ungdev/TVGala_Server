@@ -5,7 +5,6 @@ import path from 'path';
 import models from './models';
 
 // Initialisation
-
 const app = express()
     .use(bodyParser.json())
     .use(express.static(path.join(__dirname, './public')));
@@ -20,6 +19,18 @@ const io = socketio.listen(server);
 // Variables
 let informations = [];
 let schedules = [];
+
+// API
+app.post('/sms', (req, res) => {
+    console.log('SMS received');
+    const receivedSms = Object.assign({}, req.body, {time: new Date()});
+    models.Sms.save({
+        content: receivedSms.message,
+        from: receivedSms.from
+    });
+    io.sockets.emit('sms', receivedSms);
+    res.end(JSON.stringify(receivedSms, null, 2));
+});
 
 // Evenements socket.io
 io.on('connection', socket => {

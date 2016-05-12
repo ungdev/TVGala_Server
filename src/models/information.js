@@ -7,7 +7,7 @@ const Information = thinky.createModel('Information', {
     id         : type.string().optional(),
     message       : type.string(),
     createdAt  : type.date().default(new Date()),
-    editedAt   : Date,
+    editedAt   : type.date().default(new Date()),
     isRemoved  : type.boolean().default(false)
 }, {
     enforce_missing: true,
