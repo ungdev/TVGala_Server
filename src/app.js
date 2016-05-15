@@ -2,12 +2,13 @@ import express from 'express';
 import socketio from 'socket.io';
 import bodyParser from 'body-parser';
 import path from 'path';
+import fs from 'fs';
 import models from './models';
 
 // Initialisation
 const app = express()
     .use(bodyParser.json())
-    .use(express.static(path.join(__dirname, './public')));
+    .use(express.static(path.join(__dirname, '../src/public')));
 
 app.locals.models = models;
 
@@ -16,9 +17,11 @@ const server = app.listen(9000, () => {
 });
 const io = socketio.listen(server);
 
-// Variables
+// Variables*
+const p = './src/public/images/';
 let informations = [];
 let schedules = [];
+let images = [];
 
 // API
 app.post('/sms', (req, res) => {
@@ -37,6 +40,7 @@ io.on('connection', socket => {
     console.log('TV connected');
     socket.emit('informations', informations);
     socket.emit('schedules', schedules);
+    socket.emit('images', images);
 });
 
 // Initialisation BDD
@@ -55,6 +59,13 @@ models.Information.changes().then(feed => {
 
 models.Schedule.changes().then(feed => {
     updateStoreAndSend('schedules', schedules, feed);
+});
+
+// Modifications directory
+fs.watch(p, (event, filename) => {
+    if(event == 'rename') {
+        imagesFilesAndSend(p);
+    }
 });
 
 // Fonctions
@@ -85,3 +96,16 @@ function updateStoreAndSend(node, store, feed) {
         io.sockets.emit(node, store);
     });
 }
+
+function imagesFilesAndSend(directory) {
+    fs.readdir(p, (err, files) => {
+        if (err) {
+            throw err;
+        }
+        images = files;
+        io.sockets.emit('images', images);
+    });
+}
+
+// Premier chargement
+imagesFilesAndSend(p);
