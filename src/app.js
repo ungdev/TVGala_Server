@@ -25,9 +25,9 @@ let images = [];
 
 // API
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
 });
 
 app.post('/sms', (req, res) => {
@@ -45,8 +45,29 @@ app.get('/informations', (req, res) => {
     res.json(informations);
 });
 
+app.post('/information', (req, res) => {
+    const data = req.body;
+    models.Information.save({
+        message: data.message
+    }).then(result => {
+        res.json(result);
+    });
+});
+
 app.get('/schedules', (req, res) => {
     res.json(schedules);
+});
+
+app.post('/schedule', (req, res) => {
+    const data = req.body;
+    models.Schedule.save({
+        name: data.name,
+        location: data.location,
+        start: data.start,
+        end: data.end
+    }).then(result => {
+        res.json(result);
+    });
 });
 
 // Evenements socket.io
