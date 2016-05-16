@@ -24,6 +24,12 @@ let schedules = [];
 let images = [];
 
 // API
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 app.post('/sms', (req, res) => {
     console.log('SMS received');
     const receivedSms = Object.assign({}, req.body, {time: new Date()});
@@ -33,6 +39,14 @@ app.post('/sms', (req, res) => {
     });
     io.sockets.emit('sms', receivedSms);
     res.end(JSON.stringify(receivedSms, null, 2));
+});
+
+app.get('/informations', (req, res) => {
+    res.json(informations);
+});
+
+app.get('/schedules', (req, res) => {
+    res.json(schedules);
 });
 
 // Evenements socket.io
