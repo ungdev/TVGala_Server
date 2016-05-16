@@ -27,6 +27,7 @@ let images = [];
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "POST, GET, DELETE");
     next();
 });
 
@@ -54,6 +55,13 @@ app.post('/information', (req, res) => {
     });
 });
 
+app.delete('/information/:id', (req, res) => {
+    models.Information.get(req.params.id).run().then(inst => {
+        inst.delete();
+        res.json(inst);
+    });
+});
+
 app.get('/schedules', (req, res) => {
     res.json(schedules);
 });
@@ -67,6 +75,13 @@ app.post('/schedule', (req, res) => {
         end: data.end
     }).then(result => {
         res.json(result);
+    });
+});
+
+app.delete('/schedule/:id', (req, res) => {
+    models.Schedule.get(req.params.id).run().then(inst => {
+        inst.delete();
+        res.json(inst);
     });
 });
 
