@@ -21,6 +21,7 @@ const io = socketio.listen(server);
 const p = './src/public/images/';
 let informations = [];
 let schedules = [];
+let censors = [];
 let images = [];
 
 // API
@@ -85,6 +86,26 @@ app.delete('/schedule/:id', (req, res) => {
     });
 });
 
+app.get('/censors', (req, res) => {
+    res.json(censors);
+});
+
+app.post('/censor', (req, res) => {
+    const data = req.body;
+    models.Censor.save({
+        word: data.word
+    }).then(result => {
+        res.json(result);
+    });
+});
+
+app.delete('/censor/:id', (req, res) => {
+    models.Censor.get(req.params.id).run().then(inst => {
+        inst.delete();
+        res.json(inst);
+    });
+});
+
 // Evenements socket.io
 io.on('connection', socket => {
     console.log('TV connected');
@@ -102,6 +123,10 @@ models.Schedule.execute().then(cursor => {
     schedules = cursor;
 });
 
+models.Censor.execute().then(cursor => {
+    censors = cursor;
+});
+
 // Modifications BDD
 models.Information.changes().then(feed => {
     updateStoreAndSend('informations', informations, feed);
@@ -109,6 +134,10 @@ models.Information.changes().then(feed => {
 
 models.Schedule.changes().then(feed => {
     updateStoreAndSend('schedules', schedules, feed);
+});
+
+models.Censor.changes().then(feed => {
+    updateStoreAndSend('censors', censors, feed);
 });
 
 // Modifications directory
