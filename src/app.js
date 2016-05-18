@@ -111,6 +111,7 @@ io.on('connection', socket => {
     console.log('TV connected');
     socket.emit('informations', informations);
     socket.emit('schedules', schedules);
+    socket.emit('censors', censors);
     socket.emit('images', images);
 });
 
