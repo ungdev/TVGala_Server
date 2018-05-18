@@ -18,7 +18,7 @@ const server = app.listen(9000, () => {
 const io = socketio.listen(server);
 
 // Variables*
-const p = './src/public/images/';
+const p = './';
 let informations = [];
 let schedules = [];
 let censors = [];
@@ -66,6 +66,7 @@ app.delete('/information/:id', (req, res) => {
 app.get('/schedules', (req, res) => {
     res.json(schedules);
 });
+
 
 app.post('/schedule', (req, res) => {
     const data = req.body;
@@ -147,7 +148,6 @@ fs.watch(p, (event, filename) => {
         imagesFilesAndSend(p);
     }
 });
-
 // Fonctions
 function updateStoreAndSend(node, store, feed) {
     feed.each((err, doc) => {

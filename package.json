@@ -6,11 +6,17 @@
     "start": "gulp && node build/app"
   },
   "dependencies": {
+    "bcrypt": "^2.0.1",
     "body-parser": "^1.15.0",
     "express": "^4.13.4",
-    "rethinkdb": "^2.2.2",
+    "express-react-views": "^0.10.5",
+    "express-session": "^1.15.6",
+    "pug": "^2.0.3",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "rethinkdb": "^2.3.3",
     "socket.io": "^1.4.6",
-    "thinky": "^2.2.4"
+    "thinky": "^2.3.9"
   },
   "devDependencies": {
     "babel-cli": "^6.5.1",
