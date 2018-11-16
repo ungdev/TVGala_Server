@@ -34,12 +34,14 @@ app.use((req, res, next) => {
 
 app.post('/sms', (req, res) => {
     console.log('SMS received');
-    const receivedSms = Object.assign({}, req.body, { createdAt: new Date()} );
+    //const receivedSms = Object.assign({}, req.body, { createdAt: new Date()} );
     models.Sms.save({
-        message: receivedSms.message,
-        from: receivedSms.from,
+        message: req.body.message,
+        from: req.body.from,
+    }).then(result => {
+      res.json(result)
     });
-    res.end(JSON.stringify(receivedSms, null, 2));
+    
 });
 app.get('/sms', (req, res) => {
   res.json(sms);

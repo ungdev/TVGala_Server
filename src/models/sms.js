@@ -17,6 +17,7 @@ const Sms = thinky.createModel('Sms', {
 
 Sms.pre('save', function (next) {
     this.editedAt = new Date();
+    this.createdAt = new Date();
     next();
 });
 
