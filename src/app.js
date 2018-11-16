@@ -22,7 +22,7 @@ const p = './';
 let informations = [];
 let schedules = [];
 let censors = [];
-let images = [];
+let sms = [];
 
 // API
 app.use((req, res, next) => {
@@ -34,13 +34,22 @@ app.use((req, res, next) => {
 
 app.post('/sms', (req, res) => {
     console.log('SMS received');
-    const receivedSms = Object.assign({}, req.body, {time: new Date()});
+    const receivedSms = Object.assign({}, req.body, { createdAt: new Date()} );
     models.Sms.save({
-        content: receivedSms.message,
-        from: receivedSms.from
+        message: receivedSms.message,
+        from: receivedSms.from,
     });
-    io.sockets.emit('sms', receivedSms);
     res.end(JSON.stringify(receivedSms, null, 2));
+});
+app.get('/sms', (req, res) => {
+  res.json(sms);
+});
+
+app.delete('/sms/:id', (req, res) => {
+  models.Sms.get(req.params.id).run().then(inst => {
+      inst.delete();
+      res.json(inst);
+  });
 });
 
 app.get('/informations', (req, res) => {
@@ -113,7 +122,7 @@ io.on('connection', socket => {
     socket.emit('informations', informations);
     socket.emit('schedules', schedules);
     socket.emit('censors', censors);
-    socket.emit('images', images);
+    socket.emit('sms', sms);
 });
 
 // Initialisation BDD
@@ -129,6 +138,10 @@ models.Censor.execute().then(cursor => {
     censors = cursor;
 });
 
+models.Sms.execute().then(cursor => {
+  sms = cursor;
+});
+
 // Modifications BDD
 models.Information.changes().then(feed => {
     updateStoreAndSend('informations', informations, feed);
@@ -142,12 +155,10 @@ models.Censor.changes().then(feed => {
     updateStoreAndSend('censors', censors, feed);
 });
 
-// Modifications directory
-fs.watch(p, (event, filename) => {
-    if(event == 'rename') {
-        imagesFilesAndSend(p);
-    }
+models.Sms.changes().then(feed => {
+  updateStoreAndSend('sms', sms, feed);
 });
+
 // Fonctions
 function updateStoreAndSend(node, store, feed) {
     feed.each((err, doc) => {
@@ -174,18 +185,6 @@ function updateStoreAndSend(node, store, feed) {
         }
 
         io.sockets.emit(node, store);
+        console.log('EMIT on', node)
     });
 }
-
-function imagesFilesAndSend(directory) {
-    fs.readdir(p, (err, files) => {
-        if (err) {
-            throw err;
-        }
-        images = files;
-        io.sockets.emit('images', images);
-    });
-}
-
-// Premier chargement
-imagesFilesAndSend(p);
