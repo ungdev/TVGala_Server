@@ -65,6 +65,7 @@ app.post('/information', (req, res) => {
         message: data.message
     }).then(result => {
         res.json(result);
+        informations.push(result)
     });
 });
 
