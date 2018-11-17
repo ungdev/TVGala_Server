@@ -129,6 +129,7 @@ app.delete('/censor/:id', (req, res) => {
 io.on('connection', socket => {
     console.log('TV connected');
     socket.emit('informations', informations);
+    console.log(informations.length)
     socket.emit('schedules', schedules);
     socket.emit('censors', censors);
     socket.emit('sms', sms);
