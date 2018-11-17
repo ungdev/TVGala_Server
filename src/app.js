@@ -111,6 +111,7 @@ app.post('/censor', (req, res) => {
         word: data.word
     }).then(result => {
         res.json(result);
+        censors.push(result)
     });
 });
 
@@ -118,6 +119,8 @@ app.delete('/censor/:id', (req, res) => {
     models.Censor.get(req.params.id).run().then(inst => {
         inst.delete();
         res.json(inst);
+        const index = censors.findIndex(censor => censor.id === inst.id)
+        censors.slice(index, index + 1)
     });
 });
 
