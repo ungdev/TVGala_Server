@@ -72,6 +72,8 @@ app.delete('/information/:id', (req, res) => {
     models.Information.get(req.params.id).run().then(inst => {
         inst.delete();
         res.json(inst);
+        const index = informations.findIndex(information => information.id === inst.id)
+        informations.slice(index, index + 1)
     });
 });
 
