@@ -40,6 +40,7 @@ app.post('/sms', (req, res) => {
         from: req.body.from,
     }).then(result => {
       res.json(result)
+      informations.push(result)
     });
     
 });
